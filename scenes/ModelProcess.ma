@@ -1,6 +1,6 @@
 //Maya ASCII 2017 scene
 //Name: ModelProcess.ma
-//Last modified: Wed, Sep 14, 2016 12:16:26 PM
+//Last modified: Wed, Sep 14, 2016 12:18:29 PM
 //Codeset: UTF-8
 requires maya "2017";
 currentUnit -l centimeter -a degree -t film;
@@ -13,16 +13,17 @@ fileInfo "license" "education";
 createNode transform -s -n "persp";
 	rename -uid "7F290B97-604D-6F42-87EF-9D870C936EFD";
 	setAttr ".v" no;
-	setAttr ".t" -type "double3" 17.773503084170315 21.82467187135466 34.882463872620946 ;
+	setAttr ".t" -type "double3" 5.1965027256678411 8.0672425426175032 10.198710841281867 ;
 	setAttr ".r" -type "double3" -29.13835272960257 26.999999999999968 0 ;
 createNode camera -s -n "perspShape" -p "persp";
 	rename -uid "893E2891-9D40-8950-4F97-D7881FC1C877";
 	setAttr -k off ".v" no;
 	setAttr ".fl" 34.999999999999986;
-	setAttr ".coi" 44.82186966202994;
+	setAttr ".coi" 13.104730494896753;
 	setAttr ".imn" -type "string" "persp";
 	setAttr ".den" -type "string" "persp_depth";
 	setAttr ".man" -type "string" "persp_mask";
+	setAttr ".tp" -type "double3" 0 1.6862850955000726 0 ;
 	setAttr ".hc" -type "string" "viewSet -p %camera";
 	setAttr ".ai_translator" -type "string" "perspective";
 createNode transform -s -n "top";
@@ -83,6 +84,7 @@ createNode mesh -n "pCubeShape1" -p "pCube1";
 	setAttr -k off ".v";
 	setAttr ".vir" yes;
 	setAttr ".vif" yes;
+	setAttr ".pv" -type "double2" 0.5 0.375 ;
 	setAttr ".uvst[0].uvsn" -type "string" "map1";
 	setAttr ".cuvs" -type "string" "map1";
 	setAttr ".dcc" -type "string" "Ambient+Diffuse";
@@ -185,6 +187,17 @@ createNode script -n "sceneConfigurationScriptNode";
 	rename -uid "09BCBF93-E24F-203C-C6F6-E0B60F0589DB";
 	setAttr ".b" -type "string" "playbackOptions -min 1 -max 120 -ast 1 -aet 200 ";
 	setAttr ".st" 6;
+createNode polyExtrudeFace -n "polyExtrudeFace1";
+	rename -uid "80E64D79-C84E-FBB9-644A-8E8416EE5E23";
+	setAttr ".ics" -type "componentList" 1 "f[1]";
+	setAttr ".ix" -type "matrix" 1 0 0 0 0 1 0 0 0 0 1 0 0 1.6862850955000726 0 1;
+	setAttr ".ws" yes;
+	setAttr ".pvt" -type "float3" 0 2.186285 0 ;
+	setAttr ".rs" 223360729;
+	setAttr ".c[0]"  0 1 1;
+	setAttr ".tk" 1.8999999761581421;
+	setAttr ".cbn" -type "double3" -0.5 2.1862850955000726 -0.5 ;
+	setAttr ".cbx" -type "double3" 0.5 2.1862850955000726 0.5 ;
 select -ne :time1;
 	setAttr ".o" 1;
 	setAttr ".unw" 1;
@@ -215,13 +228,15 @@ select -ne :hardwareRenderGlobals;
 	setAttr ".btrs" 512;
 select -ne :ikSystem;
 	setAttr -s 4 ".sol";
-connectAttr "polyCube1.out" "pCubeShape1.i";
+connectAttr "polyExtrudeFace1.out" "pCubeShape1.i";
 relationship "link" ":lightLinker1" ":initialShadingGroup.message" ":defaultLightSet.message";
 relationship "link" ":lightLinker1" ":initialParticleSE.message" ":defaultLightSet.message";
 relationship "shadowLink" ":lightLinker1" ":initialShadingGroup.message" ":defaultLightSet.message";
 relationship "shadowLink" ":lightLinker1" ":initialParticleSE.message" ":defaultLightSet.message";
 connectAttr "layerManager.dli[0]" "defaultLayer.id";
 connectAttr "renderLayerManager.rlmi[0]" "defaultRenderLayer.rlid";
+connectAttr "polyCube1.out" "polyExtrudeFace1.ip";
+connectAttr "pCubeShape1.wm" "polyExtrudeFace1.mp";
 connectAttr "defaultRenderLayer.msg" ":defaultRenderingList1.r" -na;
 connectAttr "pCubeShape1.iog" ":initialShadingGroup.dsm" -na;
 // End of ModelProcess.ma
